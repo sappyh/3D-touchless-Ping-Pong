@@ -67,14 +67,14 @@ class ball{
         scale(posZ);
         noStroke();
         fill(255,69,0);
-        sphere(15);
+        sphere(10);
         popMatrix();}
         r=initial_r*posZ;
       
   }
   
     boolean outofbounds(boolean x){
-     if(posX<(188-0.706*posY-5) || posX>(205.5+0.75*posY+5))
+     if(posX<(188-0.706*posY) || posX>(205.5+0.75*posY+5))
      {
        if(posY>=max && posY<=119){
        String s="out of court";

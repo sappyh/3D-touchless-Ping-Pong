@@ -40,8 +40,8 @@ class ttbat{
     powerX=(xpos-prev_xpos)*0.01;
     powerY=abs((ypos-prev_ypos)*0.1);
     powerZ=scl-prev_scl;
-    if(powerY<0.5)
-     powerY=0.5;
+    if(powerY<1.0)
+     powerY=1.0;
     prev_xpos=xpos;
     prev_ypos=ypos;
     prev_scl=scl;

@@ -47,7 +47,9 @@ void draw()
   else 
   tt_bat2.display(ball1.posX,(ball1.posY),scale2);
   
-  if(tt_bat1.intersect(ball1.posX,ball1.posY,ball1.r) && ball1.posZ>0.6){
+  
+  if(tt_bat1.intersect(ball1.posX,ball1.posY,ball1.r))
+ {
   if(hit==true)  {
   if(ball1.posY>100)
   ball1.settings(random(75,85),tt_bat1.powerX,tt_bat1.powerY+tt_bat1.powerZ,(tt_bat1.powerY+tt_bat1.powerZ)*0.003,0);
@@ -57,10 +59,10 @@ void draw()
   hit=false; 
  }
  
- if(tt_bat2.intersect(ball1.posX,ball1.posY,ball1.r) && ball1.flag==2)
+ if(tt_bat2.intersect(ball1.posX,ball1.posY,ball1.r))
  {
    if(hit==false)
-   ball1.settings(random(25,30),random(-0.1,0.1),random(1.5,3.0),-0.003,1);
+   ball1.settings(random(25,30),random(-0.1,0.1),random(0.5,3.0),-0.003,1);
    hit=true; 
  }
  
