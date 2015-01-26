@@ -1,5 +1,13 @@
 import processing.opengl.*;
 
+import processing.serial.*;
+
+Serial serial;
+int serialPort = 0;   // << Set this to be the serial port of your Arduino - ie if you have 3 ports : COM1, COM2, COM3 
+                      // and your Arduino is on COM2 you should set this to '1' - since the array is 0 based
+              
+int sen = 3; // sensors
+int div = 3; // board sub divisions
 ttbat tt_bat1;
 ttbat tt_bat2;
 PImage tt_table;
@@ -9,12 +17,24 @@ float r=20.80;
 ball ball1;
 boolean hit=true;
 int hits=0;
+boolean cal=false;
 
 int x,y;
 int speedX=1,speedY=1;
 int posX=190; int posY=248;
 int h=height/2;
 
+float[] xyz = new float[sen];
+
+float[] max={0.00,0.0,0.0};
+
+float[] min={10000.0,10000.0,10000.0};
+
+  
+  
+  
+  
+float[] diff=new float[3];
 void setup()
 {
   size(400,400,OPENGL);
@@ -22,13 +42,17 @@ void setup()
   tt_bat2=new ttbat(105,117,122,94,277,94,298,119);
   ball1=new ball();
   
+  println(Serial.list());
+  serial = new Serial(this, Serial.list()[serialPort], 115200);
+  
   tt_table=loadImage("tt_table.jpg");
   smooth();
-  frameRate(100);
+  frameRate(25);
 }
 
 void draw()
-{
+{  updateSerial();
+   println(xyz[0],xyz[1]);
   lights();
   background(tt_table);
   String t="hits:"+hits;
@@ -41,11 +65,14 @@ void draw()
      scale1+=0.1;
   
   
-  tt_bat1.display(mouseX,mouseY,scale1);
+  tt_bat1.display(xyz[0],xyz[1],scale1);
   if(ball1.posY>=50 || ball1.posY<30)
   tt_bat2.display(ball1.posX,35,scale2);
   else 
   tt_bat2.display(ball1.posX,(ball1.posY),scale2);
+  
+  if(cal)
+  {
   
   if(tt_bat1.intersect(ball1.posX,ball1.posY,ball1.r) && ball1.posZ>0.6){
   if(hit==true)  {
@@ -77,10 +104,14 @@ void draw()
  
   
   x=0;
-  
+  }
+}
+
+void mouseReleased(){
+  cal=true;
 }
  
-void keyPressed(){
+/*void keyPressed(){
 if(key == CODED) {
    if(keyCode == UP) {
      x=1;
@@ -91,4 +122,33 @@ if(key == CODED) {
 
 void mousePressed(){
   loop();
+}*/
+
+void updateSerial() {
+  
+  
+  String cur = serial.readStringUntil('\n');
+  if(cur != null) {
+    //println(cur);
+    String[] parts = split(cur, " ");
+    if(parts.length == sen  ) {
+       for(int i = 0; i < sen; i++)
+        xyz[i] = float(parts[i]);
+       //println(xyz[0],xyz[1],xyz[2]);
+       
+       if(mousePressed && mouseButton == LEFT){
+        for(int i = 0; i < sen; i++)
+         {
+           if(xyz[i] < min[i])
+           min[i] = xyz[i];
+           if(xyz[i] > max[i])
+           max[i] = xyz[i];
+         }   }
+        
+      for(int i=0;i<sen;i++){
+        diff[i]=max[i]-min[i];  
+        xyz[i]=(xyz[i]-min[i])*400/diff[i];
+       }
+    }
+  }
 }
